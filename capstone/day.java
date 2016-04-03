@@ -1,6 +1,9 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
+//import capstone.plu;
 
 public class day {
 	ArrayList<plu> pluCodes = new ArrayList<plu>();
@@ -31,6 +34,18 @@ public class day {
 		pluCodes.get(index).updateIntervals(timeSec);
 	}
 
+	public void cleanup()
+	{
+		
+		for (Iterator<plu> iterator = pluCodes.iterator(); iterator.hasNext();) {
+		    plu tempCode = iterator.next();
+		    tempCode.cleanup();
+		    if (tempCode.intervals.isEmpty()) {
+		        iterator.remove();
+		    }
+		}
+	}
+	
 	public String getDate() {
 		return Date;
 	}

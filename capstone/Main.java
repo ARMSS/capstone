@@ -53,8 +53,8 @@ public class Main extends Application {
 		MenuItem Fullscreen = new MenuItem("Toggle Fullscreen");
 		menuView.getItems().add(Data);
 		GridPane centerLayout = new GridPane();
-		centerLayout.addRow(0, makeChart());
-		centerLayout.addRow(0, makeChart());
+		centerLayout.addRow(0, makeChart(new String("Monthly Data")));
+		centerLayout.addRow(0, makeChart(new String("Daily Codes")));
 		Data.setOnAction(actionEvent -> {content.setCenter(centerLayout);((GridPane) content.getCenter()).setAlignment(Pos.CENTER);});
 		menuView.getItems().add(Fullscreen);
 		Fullscreen.setOnAction(actionEvent -> menuStage.setFullScreen(!menuStage.isFullScreen()));
@@ -62,7 +62,7 @@ public class Main extends Application {
 		return menu;
 	}
 
-	public Pane makeChart(/*File chartData*/) {
+	public Pane makeChart(/*File chartData*/String chartName) {
 		Pane MyChart = new Pane();
 		ObservableList<PieChart.Data> pieChartData =
 				FXCollections.observableArrayList(
@@ -72,7 +72,7 @@ public class Main extends Application {
 						new PieChart.Data("Pears", 22),
 						new PieChart.Data("Apples", 30));
 		final PieChart chart = new PieChart(pieChartData);
-		chart.setTitle("Product Codes");
+		chart.setTitle(chartName);
 		MyChart.getChildren().add(chart);
 		return MyChart;
 	}
@@ -82,7 +82,7 @@ public class Main extends Application {
 		ArrayList<String> dates = new ArrayList<String>();
 		ArrayList<Integer> pluCodesPerDay = new ArrayList<Integer>();
 		try {
-			Connection connection = DriverManager.getConnection("jdbc:sqlite:/Users/JLee/Desktop/Product");
+			Connection connection = DriverManager.getConnection("jdbc:sqlite:./src/Product");
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT DISTINCT substr(creationTime,1,10) AS date FROM PLUtimes ORDER BY date ASC");
 			while(rs.next()) {
@@ -123,30 +123,7 @@ public class Main extends Application {
 		}
 		System.out.println("TEST");
 		for(int victor = 0; victor < month.size(); victor++) {
-			//System.out.print("day "+month.get(victor).getDate()+": ");
-			for(int i = 0; i < month.get(victor).pluCodes.size(); i++) {
-				//System.out.print("Plu: "+month.get(victor).pluCodes.get(i).getPlu()+" ");
-				for(int j = 0; j < month.get(victor).pluCodes.get(i).intervals.size(); j++) {
-					if(month.get(victor).pluCodes.get(i).intervals.get(j).getCount() < 8)
-					{
-						month.get(victor).pluCodes.get(i).intervals.remove(j);
-						j--;
-						continue;
-					}
-					//System.out.print(" intervals: " + month.get(victor).pluCodes.get(i).intervals.get(j).getCount()+" ");
-					//System.out.print(" average: " + month.get(victor).pluCodes.get(i).intervals.get(j).getAverage()+" ");
-				}
-				if(month.get(victor).pluCodes.get(i).intervals.isEmpty())
-				{
-					month.get(victor).pluCodes.remove(i);
-					i--;
-				}
-			}
-		//	System.out.println();
-		}
-		
-		
-		for(int victor = 0; victor < month.size(); victor++) {
+			month.get(victor).cleanup();
 			System.out.print("day "+month.get(victor).getDate()+": ");
 			for(int i = 0; i < month.get(victor).pluCodes.size(); i++) {
 				System.out.print("Plu: "+month.get(victor).pluCodes.get(i).getPlu()+" ");
@@ -158,8 +135,30 @@ public class Main extends Application {
 				}
 				System.out.println();
 			}
-			System.out.println();
+
 		}
+		
+		
+		//System.out.print("day "+month.get(victor).getDate()+": ");
+		/*for(int i = 0; i < month.get(victor).pluCodes.size(); i++) {
+			//System.out.print("Plu: "+month.get(victor).pluCodes.get(i).getPlu()+" ");
+			for(int j = 0; j < month.get(victor).pluCodes.get(i).intervals.size(); j++) {
+				if(month.get(victor).pluCodes.get(i).intervals.get(j).getCount() < 8)
+				{
+					month.get(victor).pluCodes.get(i).intervals.remove(j);
+					j--;
+					continue;
+				}
+				//System.out.print(" intervals: " + month.get(victor).pluCodes.get(i).intervals.get(j).getCount()+" ");
+				//System.out.print(" average: " + month.get(victor).pluCodes.get(i).intervals.get(j).getAverage()+" ");
+			}
+			if(month.get(victor).pluCodes.get(i).intervals.isEmpty())
+			{
+				month.get(victor).pluCodes.remove(i);
+				i--;
+			}
+		}*/
+	//	System.out.println();
 		
 		
 		/*try {
